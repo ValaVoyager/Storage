@@ -3,9 +3,9 @@ executable(
 
 	'TmpMain.vala',
 
-	'Entity/Cookie.vala',
+	'Domain/Entity/Cookie.vala',
 
-	'Enum/SitePolicyEnum.vala',
+	'Domain/Enum/SitePolicyEnum.vala',
 
 	dependencies: [
 		dependency('gtk+-3.0'),

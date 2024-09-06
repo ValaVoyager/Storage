@@ -1,24 +1,24 @@
-using Enum;
+using Domain.Enum;
 
-public class Entity.Cookie {
+public class Domain.Entity.Cookie {
     private string name { get; set; }
-    private string value { private get; private set; }
+    private string value;
     private string domain { get; set; }
     private string path { get; set; }
     private int64? expiration { get; set; }
     private long size { get; set; }
-    private SitePolicyEnum sameSite { get; set; }
-    private int64? lastAccess { get; set; }
-    private int64 createdOn { get; set; }
+    private SitePolicyEnum same_site { get; set; }
+    private int64? last_access { get; set; }
+    private int64 created_on { get; set; }
 
     public Cookie (string name,
                    string value,
                    string domain,
                    string? path,
                    int64? expiration,
-                   SitePolicyEnum? sameSite,
-                   int64? lastAccess,
-                   int64? createdOn
+                   SitePolicyEnum? same_site,
+                   int64? last_access,
+                   int64? created_on
     ) {
         this.name = name;
         this.value = value;
@@ -26,22 +26,22 @@ public class Entity.Cookie {
         this.path = path ?? "/";
         this.expiration = expiration;
         this.size = this.value.length; // May be useless
-        this.sameSite = sameSite ?? SitePolicyEnum.STRICT;
-        this.lastAccess = lastAccess;
-        this.createdOn = createdOn ?? new DateTime.now ().to_unix ();
+        this.same_site = same_site ?? SitePolicyEnum.STRICT;
+        this.last_access = last_access;
+        this.created_on = created_on ?? new DateTime.now ().to_unix ();
     }
 
-    public string getValue () {
-        this.lastAccess = new DateTime.now ().to_unix ();
+    public string get_value () {
+        this.last_access = new DateTime.now ().to_unix ();
         return this.value;
     }
 
-    public void setValue (string value) {
+    public void set_value (string value) {
         this.value = value;
         this.size = this.value.length;
     }
 
-    public string toJson () {
+    public string to_json () {
         var builder = new Json.Builder ();
 
         builder.begin_object ();
@@ -57,7 +57,7 @@ public class Entity.Cookie {
         if (this.expiration == null) builder.add_null_value ();
         else builder.add_int_value (this.expiration);
         builder.set_member_name ("sameSite");
-        switch (this.sameSite) {
+        switch (this.same_site) {
             case SitePolicyEnum.STRICT:
                 builder.add_string_value ("STRICT");
                 break;
@@ -69,10 +69,10 @@ public class Entity.Cookie {
                 break;
         }
         builder.set_member_name ("lastAccess");
-        if (this.lastAccess == null) builder.add_null_value ();
-        else builder.add_int_value (this.lastAccess);
+        if (this.last_access == null) builder.add_null_value ();
+        else builder.add_int_value (this.last_access);
         builder.set_member_name ("createdOn");
-        builder.add_int_value (this.createdOn);
+        builder.add_int_value (this.created_on);
         builder.end_object ();
 
         Json.Generator generator = new Json.Generator ();
@@ -82,7 +82,7 @@ public class Entity.Cookie {
         return generator.to_data (null);
     }
 
-    public static Cookie fromJson (string json) {
+    public static Cookie from_json (string json) throws GLib.Error {
         var parser = new Json.Parser ();
         parser.load_from_data (json);
 
@@ -94,42 +94,42 @@ public class Entity.Cookie {
         var domain = obj.get_string_member ("domain");
         var path = obj.get_string_member ("path");
         var expiration = obj.get_int_member ("expiration");
-        var sameSiteStr = obj.get_string_member ("sameSite");
-        SitePolicyEnum? sameSite = null;
-        switch (sameSiteStr) {
+        var same_site_str = obj.get_string_member ("same_site");
+        SitePolicyEnum? same_site = null;
+        switch (same_site_str) {
             case "STRICT":
-                sameSite = SitePolicyEnum.STRICT;
+                same_site = SitePolicyEnum.STRICT;
                 break;
             case "LAX":
-                sameSite = SitePolicyEnum.LAX;
+                same_site = SitePolicyEnum.LAX;
                 break;
             case "NONE":
-                sameSite = SitePolicyEnum.NONE;
+                same_site = SitePolicyEnum.NONE;
                 break;
         }
-        var lastAccess = obj.get_int_member ("lastAccess");
-        var createdOn = obj.get_int_member ("createdOn");
+        var last_access = obj.get_int_member ("last_access");
+        var created_on = obj.get_int_member ("created_on");
 
-        return new Cookie (name, value, domain, path, expiration, sameSite, lastAccess, createdOn);
+        return new Cookie (name, value, domain, path, expiration, same_site, last_access, created_on);
     }
 
-    public void printCookie () {
+    public void print_cookie () {
         print ("Name: " + this.name + "\n");
         print ("Value: " + this.value + "\n");
         print ("Domain: " + this.domain + "\n");
         print ("Path: " + this.path + "\n");
 
         print ("Expiration: ");
-        if (this.expiration == null) print("\033[1mnull\033[0m\n");
+        if (this.expiration == null) print ("\033[1mnull\033[0m\n");
         else print (this.expiration.to_string () + "\n");
 
         print ("Size: " + this.size.to_string () + "\n");
 
         print ("LastAccess: ");
-        if (this.lastAccess == null) print("\033[1mnull\033[0m\n");
-        else print (this.lastAccess.to_string () + "\n");
+        if (this.last_access == null) print ("\033[1mnull\033[0m\n");
+        else print (this.last_access.to_string () + "\n");
 
-        print ("CreatedOn: " + this.createdOn.to_string ());
+        print ("CreatedOn: " + this.created_on.to_string ());
     }
 }
 
